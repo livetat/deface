@@ -210,22 +210,18 @@ module Deface
 
 
     private
-
       # check if method is compiled for the current virtual path
       #
       def expire_compiled_template
-        if compiled_method_name = ActionView::Base::CompiledTemplates.instance_methods.detect { |name| name =~ /#{args[:virtual_path].gsub(/[^a-z_]/, '_')}/ }
+        if compiled_method_name = ActionView::Base.with_empty_template_cache.instance_methods.detect { |name| name =~ /#{args[:virtual_path].gsub(/[^a-z_]/, '_')}/ }
           #if the compiled method does not contain the current deface digest
           #then remove the old method - this will allow the template to be
           #recompiled the next time it is rendered (showing the latest changes)
 
           unless compiled_method_name =~ /\A_#{self.class.digest(:virtual_path => @args[:virtual_path])}_/
-            ActionView::Base::CompiledTemplates.send :remove_method, compiled_method_name
+            ActionView::Base.with_empty_template_cache.send :remove_method, compiled_method_name
           end
         end
-
       end
-
   end
-
 end
