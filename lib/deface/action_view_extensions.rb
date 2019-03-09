@@ -27,9 +27,8 @@ ActionView::Template.class_eval do
   # view needs to be recompiled
   #
   def render(view, locals, buffer=nil, &block)
-
     if view.instance_methods.map(&:to_s).include?("compiled_method_container")
-      mod = ActionView::Base.with_empty_template_cache
+      mod = view.compiled_method_container
     else
       mod = view.singleton_class
     end
